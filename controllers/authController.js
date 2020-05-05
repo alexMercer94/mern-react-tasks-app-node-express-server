@@ -29,8 +29,8 @@ exports.authenticateUser = async (req, res) => {
         // Crear y firmar el JWT
         const payload = {
             user: {
-                id: user.id
-            }
+                id: user.id,
+            },
         };
 
         // Firmar JWT
@@ -38,7 +38,7 @@ exports.authenticateUser = async (req, res) => {
             payload,
             process.env.SECRET,
             {
-                expiresIn: 3600 // 1 hour
+                expiresIn: 3600, // 1 hour
             },
             (error, token) => {
                 if (error) throw error;
@@ -47,5 +47,16 @@ exports.authenticateUser = async (req, res) => {
         );
     } catch (error) {
         console.log(error);
+    }
+};
+
+// Get which user is authenticated
+exports.userAuthenticated = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json({ user });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: 'Hubo un error' });
     }
 };
