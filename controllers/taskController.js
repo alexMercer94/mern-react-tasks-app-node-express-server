@@ -36,8 +36,9 @@ exports.createTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
     try {
         // Extract project and check accuracy
-        const { project } = req.body;
+        const { project } = req.query;
         const proyectExist = await Project.findById(project);
+
         if (!proyectExist) {
             res.status(404).json({ msg: 'Proyecto no encontrado' });
         }
@@ -48,7 +49,7 @@ exports.getTasks = async (req, res) => {
         }
 
         // Get task by project
-        const tasks = await Task.find({ project });
+        const tasks = await Task.find({ project }).sort({ createdAt: -1 });
         res.json({ tasks });
     } catch (error) {
         console.log(error);
@@ -78,8 +79,8 @@ exports.updateTask = async (req, res) => {
         // Create a new object with new data
         const newTask = {};
 
-        if (name) newTask.name = name;
-        if (state) newTask.state = state;
+        newTask.name = name;
+        newTask.state = state;
 
         // Save task
         task = await Task.findOneAndUpdate({ _id: req.params.id }, newTask, { new: true });
@@ -94,7 +95,7 @@ exports.updateTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
     try {
         // Extract project and check accuracy
-        const { project } = req.body;
+        const { project } = req.query;
 
         // Verify if task exist
         let task = await Task.findById(req.params.id);

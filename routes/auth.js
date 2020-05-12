@@ -9,14 +9,7 @@ const authMiddleware = require('../middleware/auth');
  * Login
  */
 // api/auth
-router.post(
-    '/',
-    [
-        check('email', 'Agrega un email válido').isEmail(),
-        check('password', 'El password debe ser minimo de 6 carácteres.').isLength({ min: 6 }),
-    ],
-    authController.authenticateUser
-);
+router.post('/', authController.authenticateUser);
 
 /**
  * Get user authenticated
